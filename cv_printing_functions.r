@@ -188,6 +188,42 @@ print_section <- function(cv, section_id, glue_template = "default") {
 }
 
 
+#' @description Take a position data frame and only the publications and prints the section to markdown.
+#' @param section_id ID of the entries section to be printed as encoded by the `section` column of the `entries` table
+print_pubs <- function(cv, section_id, glue_template = "default") {
+  if (glue_template == "default") {
+    glue_template <- "
+### {title}
+
+{loc}
+
+{institution}
+
+{timeline}
+
+\n\n\n"
+  }
+  
+  section_data <- dplyr::filter(cv$entries_data, section == section_id)
+  
+  if (length(section_data) == 0) {
+    stop(glue::glue("Tried to print section {section_id} with no entries. Make sure everything is spelled correctly or remove this section."))
+  }
+  
+  # Take entire entries data frame and removes the links in descending order
+  # so links for the same position are right next to each other in number.
+  for (i in 1:nrow(section_data)) {
+    for (col in c("title", "description_bullets")) {
+      strip_res <- sanitize_links(cv, section_data[i, col])
+      section_data[i, col] <- strip_res$text
+      cv <- strip_res$cv
+    }
+  }
+  
+  print(glue::glue_data(section_data, glue_template))
+  
+  invisible(strip_res$cv)
+}
 
 #' @description Prints out text block identified by a given label.
 #' @param label ID of the text block to print as encoded in `label` column of `text_blocks` table.
