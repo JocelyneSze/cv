@@ -22,22 +22,9 @@ source("cv_printing_functions.r")
 # Read in all data and initialize a CV printer object
 CV <- create_CV_object(
   data_location = "https://docs.google.com/spreadsheets/d/1afKnF-zAtPDv2ofFPmj0QSASNOahauBHibxrHEVQP9M",  
-  pdf_mode = params$pdf_mode
+  pdf_mode = FALSE
 )
 
-```
-
-
-```{r}
-# When in pdf export mode the little dots are unaligned, so fix that with some conditional CSS.
-if(params$pdf_mode) {
-    cat("
-<style>
-:root{
-  --decorator-outer-offset-left: -6.5px;
-}
-</style>")
-}
 ```
 
 
